@@ -1,6 +1,7 @@
-// actions/_addNewClient.ts
 "use server";
+import { sendClientInvitation } from "@/lib/email/send-client-invitation";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
+import { createInvitation } from "@/lib/utils/invite-tokens";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
@@ -26,10 +27,10 @@ export async function addClient(params: AddNewClientParams) {
 
     const supabase = await createAdminClient();
 
-    // Verify trainer ownership
+    // Verify trainer ownership and get trainer details
     const { data: trainer } = await supabase
       .from("trainer_trainers")
-      .select("id")
+      .select("id, full_name, email, business_name")
       .eq("clerk_user_id", userId)
       .eq("id", params.trainerId)
       .single();
@@ -76,18 +77,45 @@ export async function addClient(params: AddNewClientParams) {
       return { success: false, error: "Failed to create client" };
     }
 
-    // TODO: Send invitation email if sendInvite is true
-    // This would integrate with your email service (Resend, SendGrid, etc.)
+    // Send invitation email if requested
     if (params.sendInvite) {
-      // Example invitation logic:
-      // const inviteToken = await generateInviteToken(newClient.id);
-      // await sendInvitationEmail({
-      //   to: params.email,
-      //   clientName: params.fullName,
-      //   inviteLink: `${process.env.NEXT_PUBLIC_APP_URL}/client/accept-invite?token=${inviteToken}`
-      // });
+      try {
+        // Create invitation record
+        const invitation = await createInvitation(
+          newClient.id,
+          params.trainerId,
+          params.email
+        );
 
-      console.log("TODO: Send invitation email to:", params.email);
+        // Send email
+        const emailResult = await sendClientInvitation({
+          to: params.email,
+          clientName: params.fullName,
+          trainerName: trainer.full_name || "Your Trainer",
+          trainerEmail: trainer.email,
+          trainerBusinessName: trainer.business_name || undefined,
+          inviteToken: invitation.token,
+        });
+
+        if (!emailResult.success) {
+          console.error("Failed to send invitation email:", emailResult.error);
+          // Don't fail the whole operation if email fails
+          return {
+            success: true,
+            clientId: newClient.id,
+            warning:
+              "Client created but invitation email failed to send. You can resend it later.",
+          };
+        }
+      } catch (error) {
+        console.error("Error sending invitation:", error);
+        return {
+          success: true,
+          clientId: newClient.id,
+          warning:
+            "Client created but invitation email failed to send. You can resend it later.",
+        };
+      }
     }
 
     revalidatePath("/clients");
@@ -97,7 +125,7 @@ export async function addClient(params: AddNewClientParams) {
       clientId: newClient.id,
     };
   } catch (error) {
-    console.error("Error in addNewClient:", error);
+    console.error("Error in addClient:", error);
     return {
       success: false,
       error: "An unexpected error occurred",
