@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { SignedIn, SignedOut, SignOutButton, UserButton } from "@clerk/nextjs";
-import { Gem, Heart, Home, Menu, Search } from "lucide-react";
+import { Dumbbell, Home, Menu } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { buttonVariants } from "./ui/button";
@@ -22,8 +22,8 @@ const Nav = () => {
           href="/"
           className="flex gap-2 items-center text-xl font-bold justify-center"
         >
-          <Gem className="text-primary" size={28} />
-          <span>APP NAME</span>
+          <Dumbbell className="text-primary" size={28} />
+          <span>Trainer App</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -31,15 +31,7 @@ const Nav = () => {
           {/* Auth Buttons */}
           <SignedIn>
             <div className="flex items-center gap-4">
-              <Link
-                href="/favorites"
-                className={buttonVariants({ variant: "ghost", size: "icon" })}
-                title="Favorites"
-              >
-                <Heart size={20} />
-              </Link>
-
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </div>
           </SignedIn>
 
@@ -60,22 +52,6 @@ const Nav = () => {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center gap-2">
-          <Link
-            href="/search"
-            className={buttonVariants({ variant: "ghost", size: "icon" })}
-          >
-            <Search size={20} />
-          </Link>
-
-          <SignedIn>
-            <Link
-              href="/favorites"
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
-            >
-              <Heart size={20} />
-            </Link>
-          </SignedIn>
-
           <Sheet>
             <SheetTrigger
               className={buttonVariants({ variant: "outline", size: "icon" })}
@@ -84,9 +60,9 @@ const Nav = () => {
             </SheetTrigger>
             <SheetContent>
               <SheetHeader>
-                <SheetTitle>STL Wedding Hub</SheetTitle>
+                <SheetTitle>Trainer App</SheetTitle>
                 <SheetDescription>
-                  Find wedding professionals in St. Louis
+                  All in one clinet management platform
                 </SheetDescription>
               </SheetHeader>
               <div className="flex flex-col gap-4 py-4">
