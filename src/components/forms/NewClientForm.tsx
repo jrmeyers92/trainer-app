@@ -1,7 +1,7 @@
 // components/forms/NewClientForm.tsx
 "use client";
 
-import { addNewClient } from "@/actions/_addNewClient";
+import { addClient } from "@/actions/clients/_addClient";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { newClientSchema } from "@/lib/schemas/clientOnboardingSchema";
+import { newClientSchema } from "@/lib/validations/clientOnboardingSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -69,7 +69,7 @@ export default function NewClientForm({
     setIsSubmitting(true);
 
     try {
-      const result = await addNewClient({
+      const result = await addClient({
         trainerId,
         fullName: values.fullName,
         email: values.email,

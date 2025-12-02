@@ -16,7 +16,7 @@ interface AddNewClientParams {
   sendInvite: boolean;
 }
 
-export async function addNewClient(params: AddNewClientParams) {
+export async function addClient(params: AddNewClientParams) {
   try {
     const { userId } = await auth();
 

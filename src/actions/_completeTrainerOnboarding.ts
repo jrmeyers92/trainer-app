@@ -1,11 +1,11 @@
 // app/(auth)/onboarding/trainer/_actions.ts
 "use server";
 
+import { createAdminClient } from "@/lib/supabase/clients/admin";
 import {
   trainerOnboardingSchema,
   TrainerOnboardingValues,
-} from "@/lib/schemas/trainerOnboardingSchema";
-import { createAdminClient } from "@/lib/supabase/clients/admin";
+} from "@/lib/validations/trainerOnboardingSchema";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { z } from "zod";
 

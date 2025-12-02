@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   trainerOnboardingSchema,
   TrainerOnboardingValues,
-} from "@/lib/schemas/trainerOnboardingSchema";
+} from "@/lib/validations/trainerOnboardingSchema";
 import { useSession } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
