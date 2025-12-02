@@ -41,10 +41,13 @@ export default async function TrainerOnboardingPage() {
             </div>
           </div>
           <h1 className="text-3xl font-bold mb-2">Welcome to FitFlow!</h1>
-          <p className="text-gray-600">Let's set up your coaching profile</p>
+          <p className="text-gray-600">
+            Let&apos;s set up your coaching profile
+          </p>
           <p className="text-sm text-gray-500 mt-2">
-            You're on a <span className="font-semibold">14-day free trial</span>{" "}
-            of our Pro plan
+            You&apos;re on a{" "}
+            <span className="font-semibold">14-day free trial</span> of our Pro
+            plan
           </p>
         </div>
 

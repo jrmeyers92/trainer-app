@@ -8,18 +8,17 @@ import Link from "next/link";
 
 interface ClientsListProps {
   clients: Client[];
-  trainerId: string;
 }
 
-export default function ClientsList({ clients, trainerId }: ClientsListProps) {
+export default function ClientsList({ clients }: ClientsListProps) {
   if (clients.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
         <div className="max-w-md mx-auto">
           <h3 className="text-lg font-semibold mb-2">No clients yet</h3>
           <p className="text-gray-600 mb-6">
-            Get started by adding your first client. You'll be able to create
-            programs, track progress, and manage payments.
+            Get started by adding your first client. You&apos;ll be able to
+            create programs, track progress, and manage payments.
           </p>
           <Link href="/dashboard/clients/new">
             <Button>Add Your First Client</Button>

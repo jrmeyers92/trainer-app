@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   trainerOnboardingSchema,
   TrainerOnboardingValues,
-} from "@/lib/schemas/trainer-onboarding";
+} from "@/lib/schemas/trainerOnboardingSchema";
 import { useSession } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -93,7 +93,7 @@ export default function TrainerOnboardingForm({
                 <Input placeholder="John Smith" {...field} />
               </FormControl>
               <FormDescription>
-                Your name as you'd like clients to see it
+                Your name as you&apos;d like clients to see it
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -146,7 +146,7 @@ export default function TrainerOnboardingForm({
                 />
               </FormControl>
               <FormDescription>
-                {field.value.length}/500 characters (minimum 20)
+                {(field.value || "").length}/500 characters (minimum 20)
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -154,7 +154,7 @@ export default function TrainerOnboardingForm({
         />
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-semibold text-sm mb-2">What's next?</h3>
+          <h3 className="font-semibold text-sm mb-2">What&apos;s next?</h3>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>• Add your first client</li>
             <li>• Create workout programs</li>

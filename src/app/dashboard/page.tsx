@@ -76,7 +76,7 @@ export default async function DashboardPage() {
                 Welcome back, {trainer.full_name?.split(" ")[0] || "Coach"}!
               </h1>
               <p className="text-gray-600 mt-1">
-                Here's what's happening with your clients today
+                Here&apos;s what&apos;s happening with your clients today
               </p>
             </div>
             <Link href="/dashboard/clients/new">
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Clients List - Takes up 2 columns */}
             <div className="lg:col-span-2">
-              <ClientsList clients={clients || []} trainerId={trainer.id} />
+              <ClientsList clients={clients || []} />
             </div>
 
             {/* Recent Activity - Takes up 1 column */}

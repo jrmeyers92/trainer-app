@@ -4,7 +4,7 @@
 import {
   trainerOnboardingSchema,
   TrainerOnboardingValues,
-} from "@/lib/schemas/trainer-onboarding";
+} from "@/lib/schemas/trainerOnboardingSchema";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { z } from "zod";
@@ -12,7 +12,7 @@ import { z } from "zod";
 type TrainerOnboardingResponse = {
   success: boolean;
   error?: string;
-  validationErrors?: z.ZodError["errors"];
+  validationErrors?: z.ZodIssue[];
 };
 
 export async function completeTrainerOnboarding(
@@ -82,7 +82,7 @@ export async function completeTrainerOnboarding(
       return {
         success: false,
         error: "Validation failed",
-        validationErrors: error.errors,
+        validationErrors: error.issues,
       };
     }
 

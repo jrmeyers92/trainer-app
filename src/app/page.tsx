@@ -62,7 +62,7 @@ export default function Home() {
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Stop managing your coaching business across Instagram DMs, Google
-              Sheets, Venmo, and WhatsApp. There's a better way.
+              Sheets, Venmo, and WhatsApp. There&apos;s a better way.
             </p>
           </div>
 
@@ -212,8 +212,8 @@ export default function Home() {
             Built for Online Coaches
           </h2>
           <p className="text-center text-gray-600 mb-16 max-w-2xl mx-auto">
-            Whether you're just starting out or scaling to 50+ clients, we have
-            the tools you need
+            Whether you&apos;re just starting out or scaling to 50+ clients, we
+            have the tools you need
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">

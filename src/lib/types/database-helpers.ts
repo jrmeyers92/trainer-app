@@ -50,8 +50,11 @@ export type TrainerWithClients = Trainer & {
 };
 
 // Useful helper for forms - makes all fields optional except required ones
-export type NewClientForm = Pick<ClientInsert, "trainer_id" | "full_name" | "email"> & Partial<Omit<ClientInsert, "trainer_id" | "full_name" | "email">>;
-
+export type NewClientForm = Pick<
+  ClientInsert,
+  "trainer_id" | "full_name" | "email"
+> &
+  Partial<Omit<ClientInsert, "trainer_id" | "full_name" | "email">>;
 
 export type NewTrainerForm = Pick<TrainerInsert, "clerk_user_id" | "email"> &
   Partial<Omit<TrainerInsert, "clerk_user_id" | "email">>;
@@ -72,9 +75,13 @@ export type ClientProfile = Client & {
 
 // Subscription helper
 // Subscription helper
-export type SubscriptionInfo = Pick
+// Subscription helper
+export type SubscriptionInfo = Pick<
   Trainer,
-  "subscription_plan" | "subscription_status" | "trial_ends_at" | "subscription_ends_at"
+  | "subscription_plan"
+  | "subscription_status"
+  | "trial_ends_at"
+  | "subscription_ends_at"
 > & {
   isActive: boolean;
   isPro: boolean;
@@ -82,7 +89,6 @@ export type SubscriptionInfo = Pick
   clientLimit: number;
   daysLeftInTrial?: number;
 };
-
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
@@ -165,14 +171,18 @@ export function calculateTDEE(
 /**
  * Get subscription info with computed fields
  */
+/**
+ * Get subscription info with computed fields
+ */
 export function getSubscriptionInfo(trainer: Trainer): SubscriptionInfo {
-  const plan = trainer.subscription_plan || "free";
-  const status = trainer.subscription_status || "active";
+  const plan = (trainer.subscription_plan || "free") as SubscriptionPlan;
+  const status = (trainer.subscription_status ||
+    "active") as SubscriptionStatus;
 
-  const clientLimits = {
+  const clientLimits: Record<SubscriptionPlan, number> = {
     free: 3,
     pro: 15,
-    business: Infinity,
+    business: 999999, // Use a large number instead of Infinity
   };
 
   let daysLeftInTrial: number | undefined;
@@ -193,7 +203,7 @@ export function getSubscriptionInfo(trainer: Trainer): SubscriptionInfo {
     isActive: status === "active" || status === "trialing",
     isPro: plan === "pro",
     isBusiness: plan === "business",
-    clientLimit: clientLimits[plan as keyof typeof clientLimits],
+    clientLimit: clientLimits[plan],
     daysLeftInTrial,
   };
 }

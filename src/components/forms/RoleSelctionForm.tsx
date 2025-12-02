@@ -60,7 +60,7 @@ export default function RoleSelectionForm() {
             <User className="text-blue-600 group-hover:text-white" size={24} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-1">I'm a Client</h3>
+            <h3 className="text-lg font-semibold mb-1">I&apos;m a Client</h3>
             <p className="text-sm text-gray-600">
               My trainer uses this platform and I want to access my workout
               programs
@@ -82,7 +82,7 @@ export default function RoleSelectionForm() {
             />
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-1">I'm a Trainer</h3>
+            <h3 className="text-lg font-semibold mb-1">I&apos;m a Trainer</h3>
             <p className="text-sm text-gray-600">
               I want to manage my clients and build training programs
             </p>

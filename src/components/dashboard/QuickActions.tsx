@@ -1,6 +1,4 @@
-// components/dashboard/QuickActions.tsx
-import { Button } from "@/components/ui/button";
-import { Apple, Dumbbell, FileText, Settings, Users } from "lucide-react";
+import { Apple, Dumbbell, FileText, Users } from "lucide-react";
 import Link from "next/link";
 
 interface QuickActionsProps {
