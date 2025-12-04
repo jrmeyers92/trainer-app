@@ -7,13 +7,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { getUserRole } from "@/lib/roles";
 import { SignedIn, SignedOut, SignOutButton, UserButton } from "@clerk/nextjs";
 import { Dumbbell, Home, Menu } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { buttonVariants } from "./ui/button";
 
-const Nav = () => {
+const Nav = async () => {
+  const userRole = await getUserRole();
   return (
     <nav className="border-b sticky top-0 z-50 w-full backdrop-blur py-3 px-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -30,6 +32,15 @@ const Nav = () => {
         <div className="hidden md:flex items-center gap-6">
           {/* Auth Buttons */}
           <SignedIn>
+            <div>
+              <Link
+                href={
+                  userRole === "trainer" ? "/dashboard" : "/portal/dashboard"
+                }
+              >
+                Dashboard
+              </Link>
+            </div>
             <div className="flex items-center gap-4">
               <UserButton />
             </div>
