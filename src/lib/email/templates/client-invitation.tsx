@@ -104,8 +104,8 @@ export const ClientInvitationEmail = ({
           }}
         >
           <p>
-            If you didn't expect this invitation, you can safely ignore this
-            email.
+            If you didn&apos;t expect this invitation, you can safely ignore
+            this email.
           </p>
           <p>Questions? Reply to this email to contact {trainerName}.</p>
         </div>

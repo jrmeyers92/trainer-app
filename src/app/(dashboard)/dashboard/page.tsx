@@ -79,7 +79,7 @@ export default async function DashboardPage() {
                 Here&apos;s what&apos;s happening with your clients today
               </p>
             </div>
-            <Link href="/dashboard/clients/new">
+            <Link href="/clients/new">
               <Button size="lg" className="gap-2">
                 <Plus size={20} />
                 Add Client

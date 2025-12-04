@@ -55,7 +55,7 @@ export default async function NewClientPage() {
             Client Limit Reached
           </h3>
           <p className="text-sm text-amber-800">
-            You've reached your limit of {limit} active clients on the{" "}
+            You&apos;ve reached your limit of {limit} active clients on the{" "}
             {trainer.subscription_plan} plan. Upgrade your plan to add more
             clients.
           </p>

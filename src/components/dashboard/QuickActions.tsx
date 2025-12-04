@@ -11,7 +11,7 @@ export default function QuickActions({ clientCount }: QuickActionsProps) {
       name: "Add Client",
       description: "Onboard a new client",
       icon: Users,
-      href: "/dashboard/clients/new",
+      href: "/clients/new",
       color: "bg-blue-600 hover:bg-blue-700",
       show: true,
     },
