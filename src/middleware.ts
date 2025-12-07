@@ -10,8 +10,11 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)",
 ]);
 
-// Define onboarding routes
-const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
+// Define onboarding routes (all onboarding flows including client onboarding)
+const isOnboardingRoute = createRouteMatcher([
+  "/onboarding(.*)",
+  "/client-onboarding(.*)",
+]);
 
 // Define protected API routes
 const isProtectedApiRoute = createRouteMatcher(["/api/protected(.*)"]);
@@ -52,47 +55,35 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  // User is authenticated - handle role and onboarding flow
+  // User is authenticated beyond this point
   const role = sessionClaims?.metadata?.role as string | undefined;
   const onboardingComplete = sessionClaims?.metadata?.onboardingComplete as
     | boolean
     | undefined;
 
-  // If user has no role, redirect to role selection
-  if (!role && !path.startsWith("/onboarding/role-selection")) {
-    return NextResponse.redirect(
-      new URL("/onboarding/role-selection", req.url)
-    );
+  // Allow ALL onboarding routes for authenticated users
+  if (isOnboardingRoute(req)) {
+    return NextResponse.next();
   }
 
-  // If user has completed onboarding, don't let them access onboarding pages
-  if (role && onboardingComplete === true && isOnboardingRoute(req)) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
-  // If user hasn't completed onboarding, redirect to appropriate flow
-  if (role && onboardingComplete !== true && !isOnboardingRoute(req)) {
+  // For non-onboarding routes, check if onboarding is complete
+  if (onboardingComplete !== true) {
+    // User hasn't completed onboarding - redirect to appropriate flow
     if (role === "client") {
-      // Clients complete onboarding immediately, so this shouldn't happen
-      // But if it does, redirect to dashboard
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/client-onboarding", req.url));
     }
 
     if (role === "trainer") {
       return NextResponse.redirect(new URL("/onboarding/trainer", req.url));
     }
+
+    // No role yet - redirect to role selection
+    return NextResponse.redirect(
+      new URL("/onboarding/role-selection", req.url)
+    );
   }
 
-  // Role-based route protection
-
-  // Protect trainer dashboard
-  if (
-    path.startsWith("/dashboard") &&
-    role === "trainer" &&
-    onboardingComplete !== true
-  ) {
-    return NextResponse.redirect(new URL("/onboarding/trainer", req.url));
-  }
+  // Role-based route protection for completed users
 
   // Protect trainer-only routes
   if (

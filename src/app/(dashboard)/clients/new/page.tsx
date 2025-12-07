@@ -1,4 +1,4 @@
-import NewClientForm from "@/components/forms/NewClientForm";
+import NewClientForm from "@/components/forms/onboarding/NewClientForm";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";

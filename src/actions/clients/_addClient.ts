@@ -1,3 +1,4 @@
+// actions/clients/_addClient.ts
 "use server";
 import { sendClientInvitation } from "@/lib/email/send-client-invitation";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
@@ -87,19 +88,19 @@ export async function addClient(params: AddNewClientParams) {
           params.email
         );
 
-        // Send email
+        // Send email with trainerId included
         const emailResult = await sendClientInvitation({
           to: params.email,
           clientName: params.fullName,
           trainerName: trainer.full_name || "Your Trainer",
           trainerEmail: trainer.email,
           trainerBusinessName: trainer.business_name || undefined,
+          trainerId: params.trainerId,
           inviteToken: invitation.token,
         });
 
         if (!emailResult.success) {
           console.error("Failed to send invitation email:", emailResult.error);
-          // Don't fail the whole operation if email fails
           return {
             success: true,
             clientId: newClient.id,

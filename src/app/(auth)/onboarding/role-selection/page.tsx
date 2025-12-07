@@ -1,6 +1,6 @@
 // src/app/(auth)/onboarding/role-selection/page.tsx
 
-import RoleSelectionForm from "@/components/forms/RoleSelctionForm";
+import RoleSelectionForm from "@/components/forms/onboarding/RoleSelctionForm";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 

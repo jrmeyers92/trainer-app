@@ -1,5 +1,5 @@
 // app/(auth)/onboarding/trainer/page.tsx
-import TrainerOnboardingForm from "@/components/forms/TrainerOnboardingForm";
+import TrainerOnboardingForm from "@/components/forms/onboarding/TrainerOnboardingForm";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Dumbbell } from "lucide-react";
 import { redirect } from "next/navigation";

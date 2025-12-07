@@ -11,6 +11,7 @@ interface SendClientInvitationParams {
   trainerName: string;
   trainerEmail: string;
   trainerBusinessName?: string;
+  trainerId: string;
   inviteToken: string;
 }
 
@@ -20,10 +21,14 @@ export async function sendClientInvitation({
   trainerName,
   trainerEmail,
   trainerBusinessName,
+  trainerId,
   inviteToken,
 }: SendClientInvitationParams) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const inviteLink = `${appUrl}/client/accept-invite?token=${inviteToken}`;
+
+  // Simple signup URL with just trainerId and token
+  // The signup page will handle building the redirect URL
+  const inviteLink = `${appUrl}/sign-up?trainerId=${trainerId}&token=${inviteToken}`;
 
   try {
     const { data, error } = await resend.emails.send({
