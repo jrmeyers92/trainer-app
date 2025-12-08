@@ -1,4 +1,3 @@
-// app/dashboard/page.tsx
 import ClientsList from "@/components/dashboard/ClientsList";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import QuickActions from "@/components/dashboard/QuickActions";
@@ -12,20 +11,6 @@ import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const { userId, sessionClaims } = await auth();
-
-  if (!userId) redirect("/sign-in");
-
-  const role = sessionClaims?.metadata?.role;
-  const onboardingComplete = sessionClaims?.metadata?.onboardingComplete;
-
-  // Redirect if not completed onboarding
-  if (!onboardingComplete) {
-    if (role === "trainer") {
-      redirect("/onboarding/trainer");
-    } else {
-      redirect("/onboarding/role-selection");
-    }
-  }
 
   // Get trainer data
   const supabase = await createAdminClient();
