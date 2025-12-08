@@ -29,7 +29,7 @@ export default async function SignUpPage({ searchParams }: PageProps) {
     const redirectParams = new URLSearchParams();
     redirectParams.set("trainerId", trainerId!);
     if (token) redirectParams.set("token", token);
-    redirectUrl = `/client-onboarding?${redirectParams.toString()}`;
+    redirectUrl = `/onboarding/client?${redirectParams.toString()}`;
   } else {
     // Trainer signup - go to role selection
     redirectUrl = "/onboarding/role-selection";
