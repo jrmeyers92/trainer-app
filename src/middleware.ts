@@ -2,7 +2,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Define public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
@@ -10,13 +9,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)",
 ]);
 
-// Define onboarding routes (all onboarding flows including client onboarding)
-const isOnboardingRoute = createRouteMatcher([
-  "/onboarding(.*)",
-  "/client-onboarding(.*)",
-]);
+const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
 
-// Define protected API routes
 const isProtectedApiRoute = createRouteMatcher(["/api/protected(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -24,12 +18,10 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Handle API routes first
   if (path.startsWith("/api")) {
-    // Allow public API routes (webhooks)
     if (path.startsWith("/api/webhooks")) {
       return NextResponse.next();
     }
 
-    // Protect specific API routes if needed
     if (isProtectedApiRoute(req)) {
       const { userId } = await auth();
       if (!userId) {
@@ -70,7 +62,11 @@ export default clerkMiddleware(async (auth, req) => {
   if (onboardingComplete !== true) {
     // User hasn't completed onboarding - redirect to appropriate flow
     if (role === "client") {
-      return NextResponse.redirect(new URL("/client-onboarding", req.url));
+      // Client needs to complete onboarding but has no trainerId in URL
+      // This shouldn't happen in normal flow, redirect to role selection
+      return NextResponse.redirect(
+        new URL("/onboarding/role-selection", req.url)
+      );
     }
 
     if (role === "trainer") {
@@ -84,8 +80,6 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Role-based route protection for completed users
-
-  // Protect trainer-only routes
   if (
     path.startsWith("/trainer-dashboard") &&
     role !== "trainer" &&
@@ -94,12 +88,10 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Protect admin-only routes
   if (path.startsWith("/admin") && role !== "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Protect client portal routes
   if (
     path.startsWith("/client-portal") &&
     role !== "client" &&
@@ -113,9 +105,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };

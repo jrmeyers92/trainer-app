@@ -10,7 +10,7 @@ interface PageProps {
 }
 
 export default async function SignUpPage({ searchParams }: PageProps) {
-  const { trainerId, token } = searchParams;
+  const { trainerId, token } = await searchParams;
 
   let trainerInfo = null;
   let isClientSignup = false;

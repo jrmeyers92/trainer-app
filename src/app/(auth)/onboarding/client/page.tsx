@@ -1,35 +1,70 @@
-// app/(auth)/client-onboarding/page.tsx
+// app/onboarding/client/page.tsx
 import ClientOnboardingForm from "@/components/forms/onboarding/ClientOnboardingForm";
+import { getUserRole, hasCompletedOnboarding } from "@/lib/roles";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     trainerId?: string;
     token?: string;
-  };
+  }>;
 }
 
 export default async function ClientOnboardingPage({
   searchParams,
 }: PageProps) {
-  const { userId, sessionClaims } = await auth();
-  const { trainerId, token } = searchParams;
+  const params = await searchParams;
+  const { trainerId, token } = params;
+  const { userId } = await auth();
 
-  // Check authentication
-  if (!userId) redirect("/sign-in");
+  if (!userId) {
+    redirect("/sign-in");
+  }
 
-  // Validate required params
+  // Check if user already completed onboarding
+  const onboardingComplete = await hasCompletedOnboarding();
+  if (onboardingComplete) {
+    redirect("/dashboard");
+  }
+
   if (!trainerId || !token) {
+    redirect("/onboarding/role-selection");
+  }
+
+  const supabase = await createAdminClient();
+  const clerk = await clerkClient();
+
+  // Validate invitation
+  const { data: invitation, error: invitationError } = await supabase
+    .from("trainer_client_invitations")
+    .select(
+      `
+      id,
+      client_id,
+      email,
+      status,
+      expires_at,
+      trainer:trainer_trainers!trainer_client_invitations_trainer_id_fkey (
+        id,
+        full_name,
+        business_name
+      )
+    `
+    )
+    .eq("token", token)
+    .eq("trainer_id", trainerId)
+    .single();
+
+  if (invitationError || !invitation) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-        <div className="max-w-md w-full mx-auto p-8 bg-white rounded-xl shadow-lg text-center">
-          <h1 className="text-2xl font-bold mb-4 text-red-600">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
             Invalid Invitation
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-6">
             This invitation link is invalid. Please contact your trainer for a
             new invitation.
           </p>
@@ -38,86 +73,92 @@ export default async function ClientOnboardingPage({
     );
   }
 
-  // Validate invitation token
-  const supabase = await createAdminClient();
-  const { data: invitation, error: inviteError } = await supabase
-    .from("trainer_client_invitations")
-    .select(
-      `
-      *,
-      trainer:trainer_trainers!trainer_id (
-        full_name,
-        business_name,
-        email
-      )
-    `
-    )
-    .eq("token", token)
-    .eq("trainer_id", trainerId)
-    .eq("status", "pending")
-    .gt("expires_at", new Date().toISOString())
-    .single();
-
-  if (inviteError || !invitation) {
+  // Check if invitation is valid
+  if (invitation.status !== "pending") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-        <div className="max-w-md w-full mx-auto p-8 bg-white rounded-xl shadow-lg text-center">
-          <h1 className="text-2xl font-bold mb-4 text-red-600">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
             Invalid or Expired Invitation
           </h1>
-          <p className="text-gray-600 mb-4">
-            This invitation link has expired or has already been used.
-          </p>
-          <p className="text-sm text-gray-500">
-            Please contact your trainer for a new invitation.
+          <p className="text-gray-600 mb-6">
+            This invitation link has expired or has already been used. Please
+            contact your trainer for a new invitation.
           </p>
         </div>
       </div>
     );
   }
 
-  // Check if already completed onboarding
-  const onboardingComplete = sessionClaims?.metadata?.onboardingComplete;
-  if (onboardingComplete) {
-    redirect("/dashboard");
+  if (new Date(invitation.expires_at) < new Date()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Invitation Expired
+          </h1>
+          <p className="text-gray-600 mb-6">
+            This invitation link has expired. Please contact your trainer for a
+            new invitation.
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  // Get user info from Clerk
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
+  // Get client data
+  const { data: clientData } = await supabase
+    .from("trainer_clients")
+    .select("full_name, email, phone, primary_goal, goal_notes")
+    .eq("id", invitation.client_id)
+    .single();
 
-  const initialData = {
-    email: user.emailAddresses[0]?.emailAddress || "",
-    fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
-    trainerName: invitation.trainer.full_name || "Your Trainer",
-    trainerBusinessName: invitation.trainer.business_name,
-  };
+  // Get current user role
+  const currentRole = await getUserRole();
+
+  // Set role to "client" if not already set
+  // This is critical - ensures middleware doesn't redirect them away
+  if (!currentRole) {
+    await clerk.users.updateUserMetadata(userId, {
+      publicMetadata: {
+        role: "client",
+        onboardingComplete: false,
+      },
+    });
+  }
+
+  const trainerInfo = invitation.trainer as any;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <div className="max-w-2xl w-full mx-auto p-8 bg-white rounded-xl shadow-lg">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-4 bg-green-100 rounded-full">
-              <Users className="text-green-600" size={48} />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold mb-2">Welcome!</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+      <div className="w-full max-w-2xl">
+        <div className="mb-6 text-center bg-white rounded-lg shadow-sm border p-6">
+          <h1 className="text-2xl font-bold mb-2">
+            Welcome to{" "}
+            {trainerInfo.business_name || `${trainerInfo.full_name}'s Coaching`}
+            !
+          </h1>
           <p className="text-gray-600">
-            Join{" "}
-            {initialData.trainerBusinessName ||
-              `${initialData.trainerName}'s Coaching`}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Complete your profile to get started
+            Complete your profile to get started with your personalized fitness
+            journey
           </p>
         </div>
 
-        <ClientOnboardingForm
-          initialData={initialData}
-          trainerId={trainerId}
-          token={token}
-        />
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <ClientOnboardingForm
+            initialData={{
+              email: invitation.email,
+              fullName: clientData?.full_name,
+              phone: clientData?.phone,
+              primaryGoal: clientData?.primary_goal,
+              goalNotes: clientData?.goal_notes,
+              trainerName: trainerInfo.full_name,
+              trainerBusinessName: trainerInfo.business_name,
+            }}
+            trainerId={trainerId}
+            token={token}
+          />
+        </div>
       </div>
     </div>
   );
