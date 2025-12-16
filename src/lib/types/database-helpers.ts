@@ -288,3 +288,12 @@ export function getInitials(fullName: string): string {
     .toUpperCase()
     .slice(0, 2);
 }
+
+export type TrainerInvitation =
+  Database["public"]["Tables"]["trainer_client_invitations"]["Row"];
+
+export type TrainerInfo = Pick<Trainer, "id" | "full_name" | "business_name">;
+
+export type InvitationWithTrainer = Omit<TrainerInvitation, "trainer_id"> & {
+  trainer: TrainerInfo[];
+};

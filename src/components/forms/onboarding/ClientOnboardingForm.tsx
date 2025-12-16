@@ -67,7 +67,13 @@ export default function ClientOnboardingForm({
       currentWeight: "",
       goalWeight: "",
       activityLevel: undefined,
-      primaryGoal: initialData.primaryGoal || undefined,
+      primaryGoal:
+        initialData.primaryGoal === "weight_loss" ||
+        initialData.primaryGoal === "muscle_gain" ||
+        initialData.primaryGoal === "maintenance" ||
+        initialData.primaryGoal === "athletic_performance"
+          ? initialData.primaryGoal
+          : undefined,
       goals: initialData.goalNotes || "",
       injuries: "",
       medicalConditions: "",

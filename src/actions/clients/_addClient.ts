@@ -119,7 +119,7 @@ export async function addClient(params: AddNewClientParams) {
       }
     }
 
-    revalidatePath("/clients");
+    revalidatePath("/dashboard/clients");
 
     return {
       success: true,

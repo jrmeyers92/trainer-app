@@ -1,6 +1,7 @@
 // components/forms/RoleSelectionForm.tsx
 "use client";
 
+import { setRole } from "@/actions/onboarding/_setRole";
 // import { setRole } from "@/actions/_onboarding";
 
 import { useSession } from "@clerk/nextjs";
@@ -21,7 +22,7 @@ export default function RoleSelectionForm() {
       const formData = new FormData();
       formData.append("role", role);
 
-      // const result = await setRole(formData);
+      const result = await setRole(formData);
 
       // Reload session to get updated metadata
       await session?.reload();

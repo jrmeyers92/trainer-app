@@ -2,6 +2,7 @@
 import ClientOnboardingForm from "@/components/forms/onboarding/ClientOnboardingForm";
 import { getUserRole, hasCompletedOnboarding } from "@/lib/roles";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
+import { InvitationWithTrainer } from "@/lib/types/database-helpers";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -127,8 +128,8 @@ export default async function ClientOnboardingPage({
     });
   }
 
-  const trainerInfo = invitation.trainer as any;
-
+  const typedInvitation = invitation as InvitationWithTrainer;
+  const trainerInfo = typedInvitation.trainer[0];
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
       <div className="w-full max-w-2xl">
@@ -148,12 +149,12 @@ export default async function ClientOnboardingPage({
           <ClientOnboardingForm
             initialData={{
               email: invitation.email,
-              fullName: clientData?.full_name,
-              phone: clientData?.phone,
-              primaryGoal: clientData?.primary_goal,
-              goalNotes: clientData?.goal_notes,
-              trainerName: trainerInfo.full_name,
-              trainerBusinessName: trainerInfo.business_name,
+              fullName: clientData?.full_name ?? undefined,
+              phone: clientData?.phone ?? undefined,
+              primaryGoal: clientData?.primary_goal ?? undefined,
+              goalNotes: clientData?.goal_notes ?? undefined,
+              trainerName: trainerInfo.full_name ?? "Your Trainer",
+              trainerBusinessName: trainerInfo.business_name ?? undefined,
             }}
             trainerId={trainerId}
             token={token}

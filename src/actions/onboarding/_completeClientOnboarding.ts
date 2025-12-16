@@ -73,6 +73,9 @@ export async function completeClientOnboarding(values: ClientOnboardingValues) {
       current_weight_lbs: values.currentWeight
         ? parseFloat(values.currentWeight)
         : null,
+      starting_weight: values.currentWeight
+        ? parseFloat(values.currentWeight)
+        : null,
       goal_weight_lbs: values.goalWeight ? parseFloat(values.goalWeight) : null,
       activity_level: values.activityLevel || null,
       primary_goal: values.primaryGoal || null,

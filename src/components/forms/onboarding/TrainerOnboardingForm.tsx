@@ -1,7 +1,7 @@
 // components/forms/TrainerOnboardingForm.tsx
 "use client";
 
-import { completeTrainerOnboarding } from "@/actions/_completeTrainerOnboarding";
+import { completeTrainerOnboarding } from "@/actions/onboarding/_completeTrainerOnboarding";
 import { Button } from "@/components/ui/button";
 import {
   Form,

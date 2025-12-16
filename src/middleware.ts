@@ -61,14 +61,6 @@ export default clerkMiddleware(async (auth, req) => {
   // For non-onboarding routes, check if onboarding is complete
   if (onboardingComplete !== true) {
     // User hasn't completed onboarding - redirect to appropriate flow
-    if (role === "client") {
-      // Client needs to complete onboarding but has no trainerId in URL
-      // This shouldn't happen in normal flow, redirect to role selection
-      return NextResponse.redirect(
-        new URL("/onboarding/role-selection", req.url)
-      );
-    }
-
     if (role === "trainer") {
       return NextResponse.redirect(new URL("/onboarding/trainer", req.url));
     }
@@ -79,24 +71,7 @@ export default clerkMiddleware(async (auth, req) => {
     );
   }
 
-  // Role-based route protection for completed users
-  if (
-    path.startsWith("/trainer-dashboard") &&
-    role !== "trainer" &&
-    role !== "admin"
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
   if (path.startsWith("/admin") && role !== "admin") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
-  if (
-    path.startsWith("/client-portal") &&
-    role !== "client" &&
-    role !== "admin"
-  ) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

@@ -48,6 +48,7 @@ export const clientOnboardingSchema = z.object({
       (val) => !val || parseFloat(val) > 0,
       "Weight must be a positive number"
     ),
+
   goalWeight: z
     .string()
     .optional()

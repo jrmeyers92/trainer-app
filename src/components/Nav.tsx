@@ -34,9 +34,7 @@ const Nav = async () => {
           <SignedIn>
             <div>
               <Link
-                href={
-                  userRole === "trainer" ? "/dashboard" : "/portal/dashboard"
-                }
+                href={userRole === "trainer" ? "/dashboard" : "/client-portal"}
               >
                 Dashboard
               </Link>

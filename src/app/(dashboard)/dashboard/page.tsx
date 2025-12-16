@@ -10,7 +10,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
 
   // Get trainer data
   const supabase = await createAdminClient();
@@ -64,7 +64,7 @@ export default async function DashboardPage() {
                 Here&apos;s what&apos;s happening with your clients today
               </p>
             </div>
-            <Link href="/clients/new">
+            <Link href="/dashboard/clients/new">
               <Button size="lg" className="gap-2">
                 <Plus size={20} />
                 Add Client
