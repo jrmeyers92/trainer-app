@@ -1,7 +1,8 @@
 import { getWeighIns } from "@/actions/weighins/_getWeighins";
 import BMIWidget from "@/components/client-portal/BMIWidget";
 import WeighInChart from "@/components/client-portal/WeighInChart";
-import WeighInForm from "@/components/forms/WeighInForm";
+import ProgressPhotoForm from "@/components/forms/client/ProgressPhotoForm";
+import WeighInForm from "@/components/forms/client/WeighInForm";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
 import { auth } from "@clerk/nextjs/server";
 
@@ -29,6 +30,7 @@ const page = async () => {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <WeighInForm clerkUserId={userId} />
+        <ProgressPhotoForm clerkUserId={userId} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
