@@ -3,8 +3,10 @@ import BMIWidget from "@/components/client-portal/BMIWidget";
 import WeighInChart from "@/components/client-portal/WeighInChart";
 import ProgressPhotoForm from "@/components/forms/client/ProgressPhotoForm";
 import WeighInForm from "@/components/forms/client/WeighInForm";
+import { buttonVariants } from "@/components/ui/button";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 const page = async () => {
   const { userId } = await auth();
@@ -28,9 +30,16 @@ const page = async () => {
 
   return (
     <div className="container mx-auto space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <WeighInForm clerkUserId={userId} />
-        <ProgressPhotoForm clerkUserId={userId} />
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <WeighInForm clerkUserId={userId} />
+          <ProgressPhotoForm clerkUserId={userId} />
+        </div>
+        <div>
+          <Link href="/client-portal/progress" className={buttonVariants()}>
+            See Progress
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
