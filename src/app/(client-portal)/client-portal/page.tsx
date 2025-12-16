@@ -1,4 +1,5 @@
 import { getWeighIns } from "@/actions/weighins/_getWeighins";
+import BMIWidget from "@/components/client-portal/BMIWidget";
 import WeighInChart from "@/components/client-portal/WeighInChart";
 import WeighInForm from "@/components/forms/WeighInForm";
 import { createAdminClient } from "@/lib/supabase/clients/admin";
@@ -30,8 +31,13 @@ const page = async () => {
         <WeighInForm clerkUserId={userId} />
       </div>
 
-      <div className="max-w-xl">
-        <WeighInChart weighIns={weighIns} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <WeighInChart weighIns={weighIns} />
+        </div>
+        <div>
+          <BMIWidget client={client} />
+        </div>
       </div>
     </div>
   );

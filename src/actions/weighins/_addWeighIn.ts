@@ -74,7 +74,42 @@ export async function addWeighIn(params: AddWeighInParams) {
 
     console.log("✅ Weigh-in created successfully:", newWeighIn);
 
+    // Check if this is the most recent weigh-in
+    const { data: latestWeighIn } = await supabase
+      .from("trainer_weigh_in")
+      .select("weigh_in_date")
+      .eq("clerk_user_id", params.clerkUserId)
+      .order("weigh_in_date", { ascending: false })
+      .limit(1)
+      .single();
+
+    console.log("📅 Latest weigh-in check:", latestWeighIn);
+
+    // Update current weight only if this is the newest weigh-in
+    if (!latestWeighIn || params.weighInDate >= latestWeighIn.weigh_in_date) {
+      console.log("⚖️ Updating client current weight to:", params.weight);
+
+      const { error: updateError } = await supabase
+        .from("trainer_clients")
+        .update({
+          current_weight_lbs: params.weight,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("client_user_id", params.clerkUserId);
+
+      if (updateError) {
+        console.error("⚠️ Error updating client weight:", updateError);
+        // Don't fail the whole operation - weigh-in was still recorded
+      } else {
+        console.log("✅ Client current weight updated successfully");
+      }
+    } else {
+      console.log("ℹ️ Skipping weight update - not the most recent weigh-in");
+    }
+
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/weigh-ins");
+    revalidatePath("/dashboard/progress");
 
     return {
       success: true,
